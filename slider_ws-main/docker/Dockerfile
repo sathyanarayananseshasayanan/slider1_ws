@@ -1,0 +1,66 @@
+FROM osrf/ros:humble-desktop
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update
+RUN apt-get upgrade -y
+
+
+RUN apt-get update && apt-get install -y ros-humble-joint-state-publisher
+RUN apt-get update && apt-get install -y ros-humble-tf-transformations
+
+# RUN curl -sSL http://get.gazebosim.org | sh
+# RUN apt-get install gazebo
+
+
+RUN apt-get update && apt-get install -y \
+    gazebo \
+    ros-humble-gazebo-ros-pkgs \
+    ros-humble-xacro
+
+RUN apt-get update && apt-get install -y \
+    iproute2 \
+    iputils-ping \
+    net-tools \
+    dnsutils \
+    curl \
+    wget 
+
+
+RUN apt-get install -y python3-pip
+
+RUN pip install setuptools quadprog cvxopt numpy stable-baselines3 \
+    && python3 -m pip install --upgrade "numpy<1.24"
+
+
+RUN apt-get update && apt-get install -y \
+    ros-humble-plotjuggler-ros \
+    btop
+
+
+RUN echo 'source /opt/ros/humble/setup.bash' >> /etc/bash.bashrc && \
+    echo '[ -f /root/slider_ws/install/setup.bash ] && source /root/slider_ws/install/setup.bash' >> /etc/bash.bashrc
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["bash"]
+
+
+
+
+# RUN apt-get update
+# RUN apt-get upgrade -y
+
+# RUN apt-get install ros-humble-plotjuggler-ros
+
+# RUN apt-get install btop
+
+# EXPOSE 8080 8999
+# COPY /home/montezuma/slider_ws/docker/entrypoint.sh /entrypoint.sh
+# RUN chmod +x /entrypoint.sh
+# RUN chmod 755 /entrypoint.sh
+
+# ENTRYPOINT ["entrypoint.sh"]
+#CMD ["bash"]
+
